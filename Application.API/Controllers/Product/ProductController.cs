@@ -3,7 +3,7 @@ using Application.Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Application.API.Controllers
+namespace Application.API.Controllers.Products
 {
     [Authorize]
     [Route("api/[controller]")]

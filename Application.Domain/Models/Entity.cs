@@ -1,11 +1,9 @@
-﻿namespace Application.Domain.Models;
+﻿using MongoDB.Bson.Serialization.Attributes;
+
+namespace Application.Domain.Models;
 
 public abstract class Entity
 {
-    public Entity()
-    {
-        Id = Guid.NewGuid();
-    }
-
+    [BsonId]
     public Guid Id { get; private set; }
 }

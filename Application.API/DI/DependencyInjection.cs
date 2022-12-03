@@ -1,5 +1,6 @@
 ﻿using Application.Domain.Models;
 using Application.Domain.Repositories;
+using Application.Domain.Services;
 using AspNetCore.Identity.Mongo;
 using Infra.Data.Data;
 using Infra.Data.Repositories;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace Application.API.DI;
@@ -18,6 +18,8 @@ public static class DependencyInjection
     {
         builder.Services.AddTransient<IDbContext, DbContext>();
         builder.Services.AddScoped<IProductRepository<Product>, ProductRepository>();
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+        builder.Services.AddScoped<ITokenService, TokenService>();
 
         var key = Encoding.UTF8.GetBytes(builder.Configuration["SecretKey"]);
 
@@ -29,7 +31,13 @@ public static class DependencyInjection
             builder.Configuration["DBName"])
         .AddDefaultTokenProviders();
 
-        
+        builder.Services.AddAuthorization(opt =>
+        {
+            opt.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build();
+        });
 
         builder.Services.AddAuthentication(x =>
         {
@@ -48,14 +56,6 @@ public static class DependencyInjection
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key)
             };
-        });
-
-        builder.Services.AddAuthorization(opt =>
-        {
-            opt.FallbackPolicy = new AuthorizationPolicyBuilder()
-                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                .RequireAuthenticatedUser()
-                .Build();
         });
     }
 }

@@ -12,7 +12,7 @@ namespace Infra.Data.Data
         public DbContext(IConfiguration configuration)
         {
             var mongoClient = new MongoClient(configuration["MongoConnection"]);
-            _database = mongoClient.GetDatabase("products");
+            _database = mongoClient.GetDatabase("app");
         }
 
         public IMongoCollection<T> Collection<T>()
